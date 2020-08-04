@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using TweekBook.Data;
 using TweekBook.Domain;
 using TweekBook.Options;
 
@@ -18,11 +20,21 @@ namespace TweekBook.Services
 
         private readonly JWTSettings _jWTSettings;
 
-        public IdentityService(UserManager<IdentityUser> userManager, JWTSettings jWTSettings)
+        private readonly TokenValidationParameters _tokenValidationParameters;
+
+        private readonly DataContext _dataContext;
+
+        public IdentityService(
+            UserManager<IdentityUser> userManager,
+            JWTSettings jWTSettings,
+            TokenValidationParameters tokenValidationParameters,
+            DataContext dataContext)
         {
             ;
             _userManager = userManager;
             _jWTSettings = jWTSettings;
+            _tokenValidationParameters = tokenValidationParameters;
+            _dataContext = dataContext;
         }
 
         public async Task<AuthenticationResult> LoginAsync(string email, string password)
@@ -45,7 +57,109 @@ namespace TweekBook.Services
                 };
             }
 
-            return GenerateAuthenticationResultForUser(user);
+            return await GenerateAuthenticationResultForUser(user);
+        }
+
+        public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
+        {
+            var validatedToken = GetPrincipalFromToken(token);
+
+            if(validatedToken == null)
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessage = new [] {"InValid Token"}
+                };
+            }
+
+            var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+            var expiryDateUtc = new DateTime(year:1970,month:1,day:1,hour:0,minute:0,second:0,DateTimeKind.Utc)
+                .AddSeconds(expiryDateUnix);
+
+            if(expiryDateUtc > DateTime.UtcNow)
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessage = new[] { "This Token Hasn't expired yet" }
+                };
+            }
+
+            var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+
+            var storedRefreshToken = await _dataContext.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken);
+
+            if(storedRefreshToken == null)
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessage = new[] { "This Refresh Token Doesn't exist" }
+                };
+            }
+
+            if(DateTime.UtcNow > storedRefreshToken.ExpiryDate)
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessage = new[] { "The refresh Token has expired" }
+                };
+            }
+
+            if(storedRefreshToken.InValidated)
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessage = new[] { "This refresh Token has been Invalidated" }
+                };
+            }
+
+            if(storedRefreshToken.Used)
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessage = new[] { "This Refresh Token Has been Used" }
+                };
+            }
+
+            if(storedRefreshToken.JwtId != jti)
+            {
+                return new AuthenticationResult
+                {
+                    ErrorMessage = new[] { "This Refresh Token doesnot match the JWT" }
+                };
+            }
+
+            storedRefreshToken.Used = true;
+            _dataContext.RefreshTokens.Update(storedRefreshToken);
+            await _dataContext.SaveChangesAsync();
+            var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
+            return await GenerateAuthenticationResultForUser(user);
+        }
+
+        private ClaimsPrincipal GetPrincipalFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters, out var validatedToken);
+                if (!IsJwtWithValidSecurityAlgorithm(validatedToken))
+                {
+                    return null;
+                }
+                return principal;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private bool IsJwtWithValidSecurityAlgorithm(SecurityToken securityToken)
+        {
+            return (securityToken is JwtSecurityToken jwtSecurityToken) &&
+                jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+                StringComparison.InvariantCultureIgnoreCase);
         }
 
         public async Task<AuthenticationResult> RegisterAsync(string email, string password)
@@ -75,10 +189,10 @@ namespace TweekBook.Services
                 };
             }
 
-            return GenerateAuthenticationResultForUser(newUser);
+            return await GenerateAuthenticationResultForUser(newUser);
         }
 
-        private AuthenticationResult GenerateAuthenticationResultForUser(IdentityUser user)
+        private async Task<AuthenticationResult> GenerateAuthenticationResultForUser(IdentityUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jWTSettings.Secret);
@@ -90,16 +204,29 @@ namespace TweekBook.Services
                     new Claim(JwtRegisteredClaimNames.Email,user.Email),
                     new Claim("id",user.Id)
                 }),
-                Expires = DateTime.UtcNow.AddHours(2),
+                Expires = DateTime.UtcNow.Add(_jWTSettings.TokenLifetime),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
+            var refreshToken = new RefreshToken
+            {
+                JwtId = token.Id,
+                UserId = user.Id,
+                CreationDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddMonths(6)
+            };
+
+            await _dataContext.RefreshTokens.AddAsync(refreshToken);
+
+            await _dataContext.SaveChangesAsync();
+
             return new AuthenticationResult
             {
                 Success = true,
-                Token = tokenHandler.WriteToken(token)
+                Token = tokenHandler.WriteToken(token),
+                RefreshToken = refreshToken.Token
             };
         }
     }

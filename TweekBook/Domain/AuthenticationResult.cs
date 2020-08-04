@@ -12,5 +12,6 @@ namespace TweekBook.Domain
         public bool Success { get; set; }
 
         public IEnumerable<string> ErrorMessage { get; set; }
+        public string RefreshToken { get; internal set; }
     }
 }

@@ -11,6 +11,7 @@ namespace TweekBook.Data
     {
         public DbSet<Post> Posts { get; set; }
 
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DataContext(DbContextOptions<DataContext> options)
             : base(options)
         {
