@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TweekBook", "TweekBook\TweekBook.csproj", "{1CE7050E-814E-4381-8FA0-D4AD867381FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TweekBook.IntegrationTest", "TweekBook.IntegrationTest\TweekBook.IntegrationTest.csproj", "{32F39B3B-00DF-495A-935E-4AC1D82DC5B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TweekBook.IntegrationTest", "TweekBook.IntegrationTest\TweekBook.IntegrationTest.csproj", "{32F39B3B-00DF-495A-935E-4AC1D82DC5B1}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{552C75A5-9957-47A3-861F-40486CA90174}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{32F39B3B-00DF-495A-935E-4AC1D82DC5B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32F39B3B-00DF-495A-935E-4AC1D82DC5B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32F39B3B-00DF-495A-935E-4AC1D82DC5B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{552C75A5-9957-47A3-861F-40486CA90174}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{552C75A5-9957-47A3-861F-40486CA90174}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{552C75A5-9957-47A3-861F-40486CA90174}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{552C75A5-9957-47A3-861F-40486CA90174}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using TweekBook.Data;
@@ -11,12 +10,17 @@ using Microsoft.EntityFrameworkCore;
 using TweekBook.Contracts.V1;
 using TweekBook.Contracts.V1.Requests;
 using System.Net.Http.Headers;
+using System.Net.Http;
+using Newtonsoft.Json;
+using TweekBook.Contracts.V1.Responses;
 
 namespace TweekBook.IntegrationTest
 {
-    public class IntegrationTest
+    public class IntegrationTest : IDisposable  
     {
         protected readonly HttpClient TestClient;
+
+        private readonly IServiceProvider _serviceProvider;
 
         protected IntegrationTest()
         {
@@ -26,11 +30,12 @@ namespace TweekBook.IntegrationTest
                     {
                         services.RemoveAll(typeof(DataContext));
                         services.AddDbContext<DataContext>(options => {
-                           // options.UseInMemoryDatabase("TestDb")
+                            options.UseInMemoryDatabase("TestDb");
                         });
                     });
                 });
 
+            _serviceProvider = appFactory.Services;
             TestClient = appFactory.CreateClient();
         }
 
@@ -39,12 +44,31 @@ namespace TweekBook.IntegrationTest
             TestClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer",await GetJwtAsync());
         }
 
-        private Task<string> GetJwtAsync()
+        protected async Task<PostResponse> CreatePostAsync(CreatePostRequest createPostRequest)
         {
-            //var response = TestClient.PostAsync(ApiRoutes.Identity.Register, new UserRegisterationRequest {
+            var response = await TestClient.PostAsJsonAsync(ApiRoutes.Posts.Create, createPostRequest);
+            return (await response.Content.ReadAsAsync<PostResponse>());
+        }
 
-            //});
-            throw new NotImplementedException();
+        private async Task<string> GetJwtAsync()
+        {
+            var response = await TestClient.PostAsJsonAsync(ApiRoutes.Identity.Register, new UserRegisterationRequest {
+                Email = "test@integrationtest.com",
+                Password = "Test1234!"
+            });
+
+            var registrationResponse = await response.Content.ReadAsAsync<AuthSuccessResponse>();
+
+            return registrationResponse.Token;
+        }
+
+        public void Dispose()
+        {
+            using var serviceScope = _serviceProvider.CreateScope();
+
+            var context = serviceScope.ServiceProvider.GetService<DataContext>();
+
+            context.Database.EnsureDeleted();
         }
     }
 }

@@ -1,22 +1,18 @@
-version: '3.5'
-
-networks:
-  localdev:
-    name: localdev
+version: '3.4'
 
 services:
-  main-api:
-    build: TweekBook/
-    restart: always
+  tweekbook:
+    image: ${DOCKER_REGISTRY-}tweekbook
+    build:
+      context: .
+      dockerfile: TweekBook/Dockerfile
     ports:
       - "7000:80"
     depends_on:
       - db-server
-    networks:
-      - localdev
-
+ 
   db-server:
-    image: microsoft/mssql-server-linux:2017
+    image: mcr.microsoft.com/mssql/server:2017-latest
     container_name: db-server
     environment:
       - ACCEPT_EULA=Y
@@ -24,5 +20,4 @@ services:
       - MSSQL_TCP_PORT=1433
     ports:
       - "1400:1433"
-    networks:
-      - localdev
+ 
