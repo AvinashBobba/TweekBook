@@ -19,5 +19,7 @@ namespace TweekBook.Domain
 
         [ForeignKey(nameof(UserId))]
         public IdentityUser IdentityUser { get; set; }
+
+        public virtual List<PostTag> Tags { get; set; }
     }
 }

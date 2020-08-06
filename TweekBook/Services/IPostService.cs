@@ -18,6 +18,8 @@ namespace TweekBook.Services
 
         Task<bool> CreatePostAsync(Post post);
 
-        Task<bool> UserOwnsPostAsync(Guid postId, string v);
+        Task<bool> UserOwnsPostAsync(Guid postId, string userId);
+
+        Task<List<Tags>> GetAllTagsAsync();
     }
 }

@@ -21,6 +21,9 @@ namespace TweekBook.Services
 
         public async Task<bool> CreatePostAsync(Post post)
         {
+            post.Tags?.ForEach(x => x.TagName = x.TagName.ToLower());
+
+            await AddNewTags(post);
             await _dataContext.Posts.AddAsync(post);
             var created = await _dataContext.SaveChangesAsync();
             return created > 0;
@@ -42,7 +45,8 @@ namespace TweekBook.Services
 
         public async Task<List<Post>> GetPostsAsync()
         {
-            return await _dataContext.Posts.ToListAsync();
+            var queryable = _dataContext.Posts.AsQueryable();
+            return await queryable.Include(x => x.Tags).ToListAsync();
         }
 
         public async Task<Post> GetPostByIdAsync(Guid postId)
@@ -71,5 +75,26 @@ namespace TweekBook.Services
 
             return true;
         }
+
+        public async Task<List<Tags>> GetAllTagsAsync()
+        {
+            return await _dataContext.Tags.AsNoTracking().ToListAsync();
+        }
+
+        private async Task AddNewTags(Post post)
+        {
+            foreach (var tag in post.Tags)
+            {
+                var existingTag =
+                    await _dataContext.Tags.SingleOrDefaultAsync(x =>
+                        x.Name == tag.TagName);
+                if (existingTag != null)
+                    continue;
+
+                await _dataContext.Tags.AddAsync(new Tags
+                { Name = tag.TagName, CreatedOn = DateTime.UtcNow, CreatorId = post.UserId });
+            }
+        }
+
     }
 }

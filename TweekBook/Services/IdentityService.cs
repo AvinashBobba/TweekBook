@@ -173,8 +173,10 @@ namespace TweekBook.Services
                 };
             }
 
+            var newUserId = Guid.NewGuid();
             var newUser = new IdentityUser
             {
+                Id = newUserId.ToString(),
                 Email = email,
                 UserName = email
             };
@@ -189,21 +191,35 @@ namespace TweekBook.Services
                 };
             }
 
+            // Endpoints restricted and adding claim policy manually 
+
+            await _userManager.AddClaimAsync(newUser, new Claim(type: "tags.view", value: "true"));
             return await GenerateAuthenticationResultForUser(newUser);
         }
+
+
 
         private async Task<AuthenticationResult> GenerateAuthenticationResultForUser(IdentityUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jWTSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new System.Security.Claims.ClaimsIdentity(new[] {
+
+            //Adding the Claims to the token
+
+            var claims = new List<Claim> {
                     new Claim(JwtRegisteredClaimNames.Sub,user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Email,user.Email),
                     new Claim("id",user.Id)
-                }),
+                };
+
+            var userClaims = await _userManager.GetClaimsAsync(user);
+
+            claims.AddRange(userClaims);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new System.Security.Claims.ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.Add(_jWTSettings.TokenLifetime),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

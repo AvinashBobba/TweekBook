@@ -52,6 +52,13 @@ namespace TweekBook.Installers
                     x.TokenValidationParameters = tokenValidationParameters;
                 });
 
+            services.AddAuthorization(options => {
+                options.AddPolicy(name: "TagViewer", configurePolicy: builder =>
+                {
+                    builder.RequireClaim("Tags.View", allowedValues: "true");
+                });
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Tweek Book API", Version = "v1" });
