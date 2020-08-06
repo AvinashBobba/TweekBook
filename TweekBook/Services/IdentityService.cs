@@ -24,10 +24,13 @@ namespace TweekBook.Services
 
         private readonly DataContext _dataContext;
 
+        private readonly RoleManager<IdentityRole> _roleManager;
+
         public IdentityService(
             UserManager<IdentityUser> userManager,
             JWTSettings jWTSettings,
             TokenValidationParameters tokenValidationParameters,
+            RoleManager<IdentityRole> roleManager,
             DataContext dataContext)
         {
             ;
@@ -35,6 +38,7 @@ namespace TweekBook.Services
             _jWTSettings = jWTSettings;
             _tokenValidationParameters = tokenValidationParameters;
             _dataContext = dataContext;
+            _roleManager = roleManager;
         }
 
         public async Task<AuthenticationResult> LoginAsync(string email, string password)
@@ -193,7 +197,8 @@ namespace TweekBook.Services
 
             // Endpoints restricted and adding claim policy manually 
 
-            await _userManager.AddClaimAsync(newUser, new Claim(type: "tags.view", value: "true"));
+            //await _userManager.AddToRoleAsync(newUser, "Modator");
+            //await _userManager.AddClaimAsync(newUser, new Claim(type: "tags.view", value: "true"));
             return await GenerateAuthenticationResultForUser(newUser);
         }
 
@@ -216,6 +221,24 @@ namespace TweekBook.Services
             var userClaims = await _userManager.GetClaimsAsync(user);
 
             claims.AddRange(userClaims);
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var userRole in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+                var role = await _roleManager.FindByNameAsync(userRole);
+                if (role == null) continue;
+                var roleClaims = await _roleManager.GetClaimsAsync(role);
+
+                foreach (var roleClaim in roleClaims)
+                {
+                    if (claims.Contains(roleClaim))
+                        continue;
+
+                    claims.Add(roleClaim);
+                }
+            }
+
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

@@ -23,7 +23,11 @@ namespace TweekBook
             {
                 var dbContext = serviceScope.ServiceProvider.GetRequiredService<DataContext>();
                 await dbContext.Database.MigrateAsync();
+                
+                //Adding Roles
                 var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                
+
                 if(await roleManager.RoleExistsAsync(roleName:"Admin"))
                 {
                     var adminRole = new IdentityRole(roleName: "Admin");

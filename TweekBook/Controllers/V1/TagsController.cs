@@ -11,7 +11,7 @@ using TweekBook.Services;
 
 namespace TweekBook.Controllers.V1
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme , Roles ="Poster")]
     public class TagsController : Controller
     {
         private readonly IPostService _postService;

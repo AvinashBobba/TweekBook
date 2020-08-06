@@ -52,12 +52,7 @@ namespace TweekBook.Installers
                     x.TokenValidationParameters = tokenValidationParameters;
                 });
 
-            services.AddAuthorization(options => {
-                options.AddPolicy(name: "TagViewer", configurePolicy: builder =>
-                {
-                    builder.RequireClaim("Tags.View", allowedValues: "true");
-                });
-            });
+            services.AddAuthorization();
 
             services.AddSwaggerGen(c =>
             {
