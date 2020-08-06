@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Text;
+using TweekBook.Authorization;
 using TweekBook.Options;
 using TweekBook.Services;
 
@@ -52,7 +54,13 @@ namespace TweekBook.Installers
                     x.TokenValidationParameters = tokenValidationParameters;
                 });
 
-            services.AddAuthorization();
+            services.AddAuthorization(options => {
+                options.AddPolicy("MustWorkForABMakers", configurePolicy: policy => {
+                    policy.AddRequirements(new WorksForCompanyRequirements("abmakers.com"));
+                 });
+            });
+
+            services.AddSingleton<IAuthorizationHandler,WorksForComapnyHandler>();
 
             services.AddSwaggerGen(c =>
             {
