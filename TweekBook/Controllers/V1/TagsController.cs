@@ -22,7 +22,6 @@ namespace TweekBook.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Tags.Get)]
-        [Authorize(Policy ="TagViwer")]
         public async Task<IActionResult> GetAll()
         {
             return Ok(await _postService.GetAllTagsAsync());

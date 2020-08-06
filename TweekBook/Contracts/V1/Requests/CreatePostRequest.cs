@@ -10,6 +10,6 @@ namespace TweekBook.Contracts.V1.Requests
     {
         public string Name { get; set; }
 
-        public IEnumerable<Tags> Tags { get; set; } 
+        public IEnumerable<string> Tags { get; set; } 
     }
 }

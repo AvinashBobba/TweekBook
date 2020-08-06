@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TweekBook.Data;
 
 namespace TweekBook.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200806150558_addedPostTagEntity")]
+    partial class addedPostTagEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,7 +258,6 @@ namespace TweekBook.Data.Migrations
             modelBuilder.Entity("TweekBook.Domain.RefreshToken", b =>
                 {
                     b.Property<string>("Token")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreationDate")
@@ -265,7 +266,7 @@ namespace TweekBook.Data.Migrations
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Invalidated")
+                    b.Property<bool>("InValidated")
                         .HasColumnType("bit");
 
                     b.Property<string>("JwtId")
@@ -377,7 +378,7 @@ namespace TweekBook.Data.Migrations
 
             modelBuilder.Entity("TweekBook.Domain.RefreshToken", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });

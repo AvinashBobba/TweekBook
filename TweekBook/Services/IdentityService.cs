@@ -105,13 +105,13 @@ namespace TweekBook.Services
                 };
             }
 
-            if(storedRefreshToken.InValidated)
-            {
-                return new AuthenticationResult
-                {
-                    ErrorMessage = new[] { "This refresh Token has been Invalidated" }
-                };
-            }
+            //if(storedRefreshToken.InValidated)
+            //{
+            //    return new AuthenticationResult
+            //    {
+            //        ErrorMessage = new[] { "This refresh Token has been Invalidated" }
+            //    };
+            //}
 
             if(storedRefreshToken.Used)
             {

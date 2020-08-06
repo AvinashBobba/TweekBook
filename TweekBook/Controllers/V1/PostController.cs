@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Matching;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,9 +38,14 @@ namespace TweekBook.Controllers.V1
         [HttpPost(ApiRoutes.Posts.Create)]
         public async Task<IActionResult> Create([FromBody] CreatePostRequest createPostRequest)
         {
-            var post = new Post() { Name = createPostRequest.Name ,UserId = HttpContext.GetUserId()};
-            if (post.Id != Guid.Empty)
-                post.Id = Guid.NewGuid();
+            var newPostId = Guid.NewGuid();
+            var post = new Post
+            {
+                Id = newPostId,
+                Name = createPostRequest.Name,
+                UserId = HttpContext.GetUserId(),
+                Tags = createPostRequest.Tags.Select(x => new PostTag { PostId = newPostId, TagName = x }).ToList()
+            };
 
             await _postService.CreatePostAsync(post);
 

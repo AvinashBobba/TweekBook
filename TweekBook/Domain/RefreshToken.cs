@@ -11,6 +11,7 @@ namespace TweekBook.Domain
     public class RefreshToken
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Token { get; set; }
 
         public string JwtId { get; set; }
@@ -21,11 +22,11 @@ namespace TweekBook.Domain
 
         public bool Used { get; set; }
 
-        public bool InValidated { get; set; }
+        public bool Invalidated { get; set; }
 
         public string UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public IdentityUser IdentityUser { get; set; }
+        public IdentityUser User { get; set; }
     }
 }
