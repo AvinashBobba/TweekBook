@@ -40,8 +40,6 @@ namespace TweekBook.Filters
             }
 
             await next();
-
-            //after controller
         }
     }
 }
