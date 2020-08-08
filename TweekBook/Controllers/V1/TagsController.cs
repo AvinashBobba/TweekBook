@@ -17,6 +17,7 @@ using TweekBook.Services;
 namespace TweekBook.Controllers.V1
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Produces(contentType: "application/json")]
     public class TagsController : Controller
     {
         private readonly IPostService _postService;
@@ -27,6 +28,10 @@ namespace TweekBook.Controllers.V1
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Returns all the tags 
+        /// </summary>
+        /// <response code="200">Returns all the tags</response>
         [HttpGet(ApiRoutes.Tags.GetAll)]
         [Authorize(Policy = "MustWorkForABMakers")]
         public async Task<IActionResult> GetAll()
@@ -36,13 +41,17 @@ namespace TweekBook.Controllers.V1
             return Ok(tagResponse);
         }
 
+        /// <summary>
+        /// Create A tag
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns code="201">Created tag</returns>
+        /// <response code="400">Unable to create tags due to validation erros</response>
         [HttpPost(ApiRoutes.Tags.Create)]
+        [ProducesResponseType(typeof(TagResponse),statusCode: 201)]
+        [ProducesResponseType(typeof(ErrorResponse),statusCode: 400)]
         public async Task<IActionResult> Create([FromBody] CreateTagRequest request)
         {
-            if(!ModelState.IsValid)
-            {
-
-            }
             var newTag = new Tags
             {
                 Name = request.TagName,
@@ -53,7 +62,7 @@ namespace TweekBook.Controllers.V1
             var created = await _postService.CreateTagAsync(newTag);
             if (!created)
             {
-                return BadRequest(new { Message = "Unable to create tag" });
+                return BadRequest(new ErrorResponse{ Errors = new List<ErrorModel> { new ErrorModel { Message = "Unable to create tag" } } });
             }
 
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";

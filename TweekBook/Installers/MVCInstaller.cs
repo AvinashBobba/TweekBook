@@ -66,33 +66,7 @@ namespace TweekBook.Installers
 
             services.AddSingleton<IAuthorizationHandler,WorksForComapnyHandler>();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Tweek Book API", Version = "v1" });
-
-                var security = new OpenApiSecurityRequirement()
-                {
-                };
-
-                c.AddSecurityDefinition(name: "Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the bearer Scheme",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement 
-                {
-                    { new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Id = "Bearer",
-                            Type = ReferenceType.SecurityScheme
-                        }
-                    },new List<string>() }
-                });
-            });
+            
         }
     }
 }

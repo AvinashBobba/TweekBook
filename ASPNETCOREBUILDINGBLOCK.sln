@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TweekBook.IntegrationTest",
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{552C75A5-9957-47A3-861F-40486CA90174}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TweekBook.SDK", "TweekBook.SDK\TweekBook.SDK.csproj", "{1A72CBAB-9016-4A9A-97D6-E8EA87BDE773}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TweekBook.SDK.Sample", "TweekBook.SDK.Sample\TweekBook.SDK.Sample.csproj", "{BB9C3CEB-3553-4519-8B25-38D5207EFBC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{552C75A5-9957-47A3-861F-40486CA90174}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{552C75A5-9957-47A3-861F-40486CA90174}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{552C75A5-9957-47A3-861F-40486CA90174}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A72CBAB-9016-4A9A-97D6-E8EA87BDE773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A72CBAB-9016-4A9A-97D6-E8EA87BDE773}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A72CBAB-9016-4A9A-97D6-E8EA87BDE773}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A72CBAB-9016-4A9A-97D6-E8EA87BDE773}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB9C3CEB-3553-4519-8B25-38D5207EFBC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB9C3CEB-3553-4519-8B25-38D5207EFBC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB9C3CEB-3553-4519-8B25-38D5207EFBC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB9C3CEB-3553-4519-8B25-38D5207EFBC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
