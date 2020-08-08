@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using TweekBook.Contracts.V1;
+using TweekBook.Contracts.V1.Responses;
 using TweekBook.Services;
 
 namespace TweekBook.Controllers.V1
@@ -15,17 +17,20 @@ namespace TweekBook.Controllers.V1
     public class TagsController : Controller
     {
         private readonly IPostService _postService;
-
-        public TagsController(IPostService postService)
+        private readonly IMapper _mapper;
+        public TagsController(IPostService postService,IMapper mapper)
         {
             _postService = postService;
+            _mapper = mapper;
         }
 
-        [HttpGet(ApiRoutes.Tags.Get)]
+        [HttpGet(ApiRoutes.Tags.GetAll)]
         [Authorize(Policy = "MustWorkForABMakers")]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _postService.GetAllTagsAsync());
+            var tags = await _postService.GetAllTagsAsync();
+            var tagResponse = _mapper.Map<List<TagResponse>>(tags);
+            return Ok(tagResponse);
         }
     }
 }

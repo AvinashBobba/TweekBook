@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,16 +25,20 @@ namespace TweekBook.Controllers.V1
     {
         private readonly IPostService _postService;
 
-        public PostController(IPostService postService)
+        private readonly IMapper _mapper;
+
+        public PostController(IPostService postService, IMapper mapper)
         {
             _postService = postService;
+            _mapper = mapper;
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
         public async Task<IActionResult> GetAll()
         {
             var posts = await _postService.GetPostsAsync();
-            return Ok(posts);
+            var postResponses = _mapper.Map<List<PostResponse>>(posts);
+            return Ok(postResponses);
         }
 
         [HttpPost(ApiRoutes.Posts.Create)]
@@ -52,7 +58,7 @@ namespace TweekBook.Controllers.V1
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var locationUri = baseUrl + "/" + ApiRoutes.Posts.Get.Replace("{postId}", post.Id.ToString());
 
-            var response = new PostResponse() { Id = post.Id };
+            var response = _mapper.Map<Post>(post);
             return Created(locationUri, response);
         }
 
@@ -72,7 +78,7 @@ namespace TweekBook.Controllers.V1
             var updated = await _postService.UpdatePostAsync(post);
 
             if (updated)
-                return Ok(post);
+                return Ok(_mapper.Map<Post>(post));
 
             return NotFound();
         }
@@ -85,7 +91,7 @@ namespace TweekBook.Controllers.V1
             if (post == null)
                 return NotFound();
 
-            return Ok(post);
+            return Ok(_mapper.Map<Post>(post));
         }
 
         [HttpDelete(ApiRoutes.Posts.Delete)]

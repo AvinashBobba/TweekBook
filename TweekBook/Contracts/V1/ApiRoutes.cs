@@ -35,7 +35,8 @@ namespace TweekBook.Contracts.V1
 
         public static class Tags
         {
-            public const string Get = Base + "/tags";
+            public const string GetAll = Base + "/tags";
+            public const string Get = Base + "/tags/{tagId}";
         }
     }
 }
