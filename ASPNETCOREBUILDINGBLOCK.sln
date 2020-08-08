@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TweekBook.SDK", "TweekBook.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TweekBook.SDK.Sample", "TweekBook.SDK.Sample\TweekBook.SDK.Sample.csproj", "{BB9C3CEB-3553-4519-8B25-38D5207EFBC4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TweekBook.Contracts", "TweekBook.Contracts\TweekBook.Contracts.csproj", "{56444054-214D-4DD7-B340-065F854FCF45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{BB9C3CEB-3553-4519-8B25-38D5207EFBC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB9C3CEB-3553-4519-8B25-38D5207EFBC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB9C3CEB-3553-4519-8B25-38D5207EFBC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56444054-214D-4DD7-B340-065F854FCF45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56444054-214D-4DD7-B340-065F854FCF45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56444054-214D-4DD7-B340-065F854FCF45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56444054-214D-4DD7-B340-065F854FCF45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

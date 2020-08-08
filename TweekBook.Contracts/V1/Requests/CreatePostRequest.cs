@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using TweekBook.Domain;
+﻿using System.Collections.Generic;
 
 namespace TweekBook.Contracts.V1.Requests
 {

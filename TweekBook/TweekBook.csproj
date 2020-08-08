@@ -31,4 +31,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="5.1.2" />
   </ItemGroup>
   
+  <ItemGroup>
+    <ProjectReference Include="..\TweekBook.Contracts\TweekBook.Contracts.csproj" />
+  </ItemGroup>
+  
 </Project>

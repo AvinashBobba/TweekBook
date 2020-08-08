@@ -5,4 +5,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TweekBook.SDK\TweekBook.SDK.csproj" />
+  </ItemGroup>
+
 </Project>
