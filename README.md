@@ -30,6 +30,12 @@ This is a sample application which saves the posts . But the basic idea behind t
       
       In the middlewear we need add UseAuthentication().
       
+  4. Setting Up API Key based Authentication 
+    
+        When we need to expose our api's as external service , this way of authentication helps the application .Key can be in the header , query as parameter but here we are
+        doing it in header our example . 
+        
+        We created this as an attribute and extended the IAsyncActionFilter interface . This is written as a middlewear.
  
       
       
