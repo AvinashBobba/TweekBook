@@ -21,5 +21,6 @@ namespace TweekBook.Services
         Task<bool> UserOwnsPostAsync(Guid postId, string userId);
 
         Task<List<Tags>> GetAllTagsAsync();
+        Task<bool> CreateTagAsync(Tags newTag);
     }
 }

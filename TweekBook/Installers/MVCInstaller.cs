@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Text;
 using TweekBook.Authorization;
+using TweekBook.Filters;
 using TweekBook.Options;
 using TweekBook.Services;
 
@@ -27,7 +29,9 @@ namespace TweekBook.Installers
             .AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;
-            });
+                options.Filters.Add<ValidationFilter>();
+            })
+            .AddFluentValidation(mvcConfiguration => mvcConfiguration.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             var tokenValidationParameters = new TokenValidationParameters
             {

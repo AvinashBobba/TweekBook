@@ -96,5 +96,16 @@ namespace TweekBook.Services
             }
         }
 
+        public async Task<bool> CreateTagAsync(Tags tag)
+        {
+            tag.Name = tag.Name.ToLower();
+            var existingTag = await _dataContext.Tags.AsNoTracking().SingleOrDefaultAsync(x => x.Name == tag.Name);
+            if (existingTag != null)
+                return true;
+
+            await _dataContext.Tags.AddAsync(tag);
+            var created = await _dataContext.SaveChangesAsync();
+            return created > 0;
+        }
     }
 }
