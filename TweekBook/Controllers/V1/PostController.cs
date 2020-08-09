@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
+using TweekBook.Cache;
 using TweekBook.Contracts.V1;
 using TweekBook.Contracts.V1.Requests;
 using TweekBook.Contracts.V1.Responses;
@@ -34,6 +35,7 @@ namespace TweekBook.Controllers.V1
         }
 
         [HttpGet(ApiRoutes.Posts.GetAll)]
+        [Cached(timeToLiveSeconds:600)]
         public async Task<IActionResult> GetAll()
         {
             var posts = await _postService.GetPostsAsync();
@@ -85,6 +87,7 @@ namespace TweekBook.Controllers.V1
 
 
         [HttpGet(ApiRoutes.Posts.Get)]
+        [Cached(timeToLiveSeconds: 600)]
         public async Task<IActionResult> GetById([FromRoute] Guid postId)
         {
             var post = await _postService.GetPostByIdAsync(postId);
